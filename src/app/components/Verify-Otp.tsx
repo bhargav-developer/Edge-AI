@@ -10,6 +10,8 @@ export function VerifyOtp() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const token = location.state?.token;
+
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,26 +21,33 @@ export function VerifyOtp() {
       return;
     }
 
-    navigate("/dashboard")
+    if (!token) {
+      alert("Session expired. Please register again.");
+      navigate("/register");
+      return;
+    }
 
-    // try {
-    //   setLoading(true);
-    //   await axios.post("http://localhost:3000/api/verify-otp", {
-    //     email,
-    //     otp,
-    //   });
-    //   alert("Account verified successfully!");
-    //   navigate("/"); // go to login
-    // } catch (err: any) {
-    //   alert(err.response?.data?.msg || "Invalid OTP");
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      setLoading(true);
+
+      await axios.post(
+        "http://localhost:3000/api/verify-otp",
+        { otp, token },
+        { withCredentials: true } // ✅ cookie gets set by server
+      );
+
+      alert("Account verified successfully!");
+      navigate("/dashboard");
+
+    } catch (err: any) {
+      alert(err.response?.data?.msg || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center py-12 overflow-hidden">
-      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{
@@ -49,7 +58,6 @@ export function VerifyOtp() {
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-emerald-500/10" />
       <div className="absolute inset-0 bg-gray-950/90" />
 
-      {/* Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -60,13 +68,12 @@ export function VerifyOtp() {
             <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mb-4" />
             <h1 className="text-3xl font-bold text-white mb-2">Verify OTP</h1>
             <p className="text-gray-400 text-sm text-center">
-              Enter the 6-digit code sent to <span className="font-semibold">email</span>
+              Enter the 6-digit code sent to your email
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-gray-300">OTP</Label>
               <Input
                 type="text"
                 placeholder="Enter OTP"
@@ -88,10 +95,10 @@ export function VerifyOtp() {
           <p className="mt-6 text-center text-sm text-gray-400">
             Didn't receive the code?{" "}
             <Link
-              to="/"
+              to="/signup"
               className="text-emerald-400 hover:text-emerald-300 font-semibold"
             >
-              Resend
+              Register again
             </Link>
           </p>
         </div>

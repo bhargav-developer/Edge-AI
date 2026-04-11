@@ -18,44 +18,9 @@ export function SignUp() {
     confirmPassword: "",
   });
 
-  // 🔹 SIGNUP HANDLER
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    navigate("/verify-otp")
-
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const res = await axios.post("http://localhost:3000/api/register", {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        sports: selectedSports, // optional
-      });
-
-      alert("OTP sent! Check console/email");
-
-      // 👉 Go to OTP page
-      navigate("/verify-otp", {
-        state: { email: formData.email },
-      });
-
-    } catch (err: any) {
-      alert(err.response?.data?.msg || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
 
   const sports = ["Basketball", "Football", "Soccer", "Baseball", "Hockey"];
-
 
   const toggleSport = (sport: string) => {
     setSelectedSports((prev) =>
@@ -65,22 +30,56 @@ export function SignUp() {
     );
   };
 
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ✅ withCredentials not strictly needed here (no cookie being set on register)
+      // but good practice to be consistent
+      const res = await axios.post(
+        "http://localhost:3000/api/register",
+        {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        },
+        { withCredentials: true }
+      );
+
+
+      alert("OTP sent! Check your email");
+
+      navigate("/verify-otp", {
+        state: { token: res.data.tempToken }, // tempToken still passed via state (not a cookie)
+      });
+
+    } catch (err: any) {
+      alert(err.response?.data?.msg || "Something went wrong");
+      console.log(err)
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden py-12">
-      {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{
           backgroundImage:
-            'url("https://images.unsplash.com/photo-1665114208033-150ffe629a1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXNrZXRiYWxsJTIwY291cnQlMjBhZXJpYWwlMjB2aWV3fGVufDF8fHx8MTc3NDg2NjU0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral")',
+            'url("https://images.unsplash.com/photo-1665114208033-150ffe629a1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXNrZXRiYWxsJTIwY291cnQlMjBhZXJpYWwlMjB2aWV3fGVufDF8fHx8MTc3NDg2NjU0MXww&ixlib=rb-4.1.0&q=80&w=1080")',
         }}
       />
-
-      {/* Gradient Overlays */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-emerald-500/10" />
       <div className="absolute inset-0 bg-gray-950/90 dark:bg-gray-950/80" />
 
-      {/* Sign Up Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -88,7 +87,6 @@ export function SignUp() {
         className="relative z-10 w-full max-w-md mx-4"
       >
         <div className="bg-gray-900/80 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-2xl p-8">
-          {/* Logo & Title */}
           <div className="flex flex-col items-center mb-8">
             <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mb-4" />
             <h1 className="text-3xl font-bold text-white mb-2">
@@ -99,7 +97,6 @@ export function SignUp() {
             </p>
           </div>
 
-          {/* Sign Up Form */}
           <form onSubmit={handleSignUp} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-gray-300">
@@ -184,7 +181,6 @@ export function SignUp() {
               </div>
             </div>
 
-            {/* Favorite Sports */}
             <div className="space-y-2">
               <Label className="text-gray-300">Favorite Sports (Optional)</Label>
               <div className="flex flex-wrap gap-2">
@@ -204,7 +200,8 @@ export function SignUp() {
                 ))}
               </div>
             </div>
-   <Button
+
+            <Button
               type="submit"
               disabled={loading}
               className="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white"
@@ -213,7 +210,6 @@ export function SignUp() {
             </Button>
           </form>
 
-          {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-800" />
@@ -225,14 +221,13 @@ export function SignUp() {
             </div>
           </div>
 
-          {/* Social Sign Up */}
           <div className="grid grid-cols-2 gap-3">
             <Button
               type="button"
               variant="outline"
               className="bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
             >
-              <Chrome className="mr-2 h-5 w-5" />
+             <i className="fa-brands fa-google"></i>
               Google
             </Button>
             <Button
@@ -240,12 +235,11 @@ export function SignUp() {
               variant="outline"
               className="bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
             >
-              <Apple className="mr-2 h-5 w-5" />
+              <i className="fa-brands fa-apple"></i>
               Apple
             </Button>
           </div>
 
-          {/* Login Link */}
           <p className="mt-6 text-center text-sm text-gray-400">
             Already have an account?{" "}
             <Link

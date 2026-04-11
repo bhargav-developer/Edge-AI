@@ -5,6 +5,7 @@ import { SignUp } from "./components/SignUp";
 import { Dashboard } from "./components/Dashboard";
 import { Profile } from "./components/Profile";
 import { VerifyOtp } from "./components/Verify-Otp";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -13,9 +14,16 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Login },
       { path: "signup", Component: SignUp },
-      { path: "dashboard", Component: Dashboard },
-      { path: "profile", Component: Profile },
-         { path: "verify-otp", Component: VerifyOtp },
+      { path: "verify-otp", Component: VerifyOtp },
+
+      // ✅ Protected
+      {
+        Component: ProtectedRoute,
+        children: [
+          { path: "dashboard", Component: Dashboard },
+          { path: "profile", Component: Profile },
+        ],
+      },
     ],
   },
 ]);

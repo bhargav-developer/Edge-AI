@@ -3,7 +3,7 @@ import { Header } from "./Header";
 
 export function Layout() {
   const location = useLocation();
-  const showHeader = location.pathname !== "/" && location.pathname !== "/signup";
+  const showHeader = location.pathname !== "/" && location.pathname !== "/signup"&& location.pathname !== "/verify-otp";
 
   return (
     <div className="min-h-screen bg-gray-950">
