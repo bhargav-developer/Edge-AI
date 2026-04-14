@@ -12,10 +12,10 @@ const handleLogout = async () => {
   try {
     await axios.post(`${BASE_URL}/api/logout`, {});
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   } catch (err) {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   }
 };
   return (
