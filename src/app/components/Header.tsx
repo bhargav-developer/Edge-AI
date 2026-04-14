@@ -2,11 +2,21 @@ import { Link, useNavigate } from "react-router";
 import { Bell, User, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
+import axios from "axios";
 
 export function Header() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-
+const handleLogout = async () => {
+  try {
+    await axios.post(`${import.meta.env.VITE_BASE_URL}/api/logout`, {}, {
+      withCredentials: true,
+    });
+    navigate("/");
+  } catch (err) {
+    console.error("Logout failed");
+  }
+};
   return (
     <header className="sticky top-0 z-50 border-b border-gray-800 bg-gray-950/95 backdrop-blur supports-[backdrop-filter]:bg-gray-950/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -67,7 +77,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/")}
+            onClick={handleLogout}
             className="text-gray-300 hover:text-white"
           >
             <LogOut className="h-5 w-5" />

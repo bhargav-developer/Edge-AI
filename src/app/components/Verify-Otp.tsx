@@ -9,6 +9,7 @@ import { Label } from "./ui/label";
 export function VerifyOtp() {
   const navigate = useNavigate();
   const location = useLocation();
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const token = location.state?.token;
 
@@ -31,7 +32,7 @@ export function VerifyOtp() {
       setLoading(true);
 
       await axios.post(
-        "http://localhost:3000/api/verify-otp",
+        `${BASE_URL}/api/verify-otp`,
         { otp, token },
         { withCredentials: true } // ✅ cookie gets set by server
       );

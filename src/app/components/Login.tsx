@@ -12,15 +12,17 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       setLoading(true);
-
+      console.log(BASE_URL)
       await axios.post(
-        "http://localhost:3000/api/login",
+        `${BASE_URL}/api/login`,
         { email, password },
         { withCredentials: true }
       );

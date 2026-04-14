@@ -17,9 +17,12 @@ import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export function Profile() {
-  const userInfo = {
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const [userInfo, setUserInfo] = useState({
     name: "Alex Thompson",
     email: "alex.thompson@email.com",
     joinDate: "January 2024",
@@ -28,7 +31,32 @@ export function Profile() {
     returnPercent: "+27.8%",
     winRate: "68%",
     tradesCompleted: 234,
-  };
+  });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/auth/me`, {
+          withCredentials: true,
+        });
+        console.log(res)
+        setUserInfo((prev) => ({
+          ...prev,
+          name: res.data.user.name,
+          email: res.data.user.email,
+        }));
+      } catch (err) {
+        console.error("Not authenticated");
+      }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+  console.log(userInfo);
+}, [userInfo.name]);
+
+
 
   const tradingHistory = [
     {
@@ -79,10 +107,19 @@ export function Profile() {
     { stock: "LeBron James (LBJ)", shares: 100, avgPrice: 148.5, currentPrice: 156.2, value: 15620, profit: 770 },
   ];
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
+     try {
+    await axios.patch(
+      `${BASE_URL}/api/update-profile`,
+      { name: userInfo.name },
+      { withCredentials: true }
+    );
     toast.success("Profile Updated", {
       description: "Your changes have been saved successfully",
     });
+  } catch (err) {
+    toast.error("Failed to update profile");
+  }
   };
 
   const handleChangePassword = () => {
@@ -301,29 +338,31 @@ export function Profile() {
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="name" className="text-gray-400">
+                      <Label htmlFor="name" className="text-gray-400 m-1">
                         Name
                       </Label>
-                      <Input
-                        id="name"
-                        value={userInfo.name}
-                        className="bg-gray-800/50 border-gray-700 text-white"
-                      />
+                     <Input
+  id="name"
+  value={userInfo.name}
+  onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
+  className="bg-gray-800/50 border-gray-700 text-white"
+/>
                     </div>
                     <div>
-                      <Label htmlFor="email" className="text-gray-400">
+                      <Label htmlFor="email" className="m-1 text-gray-400">
                         Email
                       </Label>
                       <Input
                         id="email"
                         type="email"
                         value={userInfo.email}
+                        disabled={true}
                         className="bg-gray-800/50 border-gray-700 text-white"
                       />
                     </div>
                     <Button 
                       onClick={handleSaveChanges}
-                      className="w-full bg-emerald-500 hover:bg-emerald-600">
+                      className="w-full bg-emerald-400 hover:bg-emerald-500 ">
                       Save Changes
                     </Button>
                   </div>

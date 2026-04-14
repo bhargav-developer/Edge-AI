@@ -10,6 +10,7 @@ import axios from "axios";
 export function SignUp() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -44,7 +45,7 @@ export function SignUp() {
       // ✅ withCredentials not strictly needed here (no cookie being set on register)
       // but good practice to be consistent
       const res = await axios.post(
-        "http://localhost:3000/api/register",
+        `${BASE_URL}/api/register`,
         {
           name: formData.name,
           email: formData.email,
