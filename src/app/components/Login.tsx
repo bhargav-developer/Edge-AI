@@ -21,13 +21,9 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
     try {
       setLoading(true);
       console.log(BASE_URL)
-      await axios.post(
-        `${BASE_URL}/api/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-
-      navigate("/dashboard");
+  const res = await axios.post(`${BASE_URL}/api/login`, { email, password });
+localStorage.setItem("token", res.data.token);
+navigate("/dashboard");
 
     } catch (err: any) {
       // ✅ Not verified → resend OTP and redirect

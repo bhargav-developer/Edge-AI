@@ -31,14 +31,10 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
     try {
       setLoading(true);
 
-      await axios.post(
-        `${BASE_URL}/api/verify-otp`,
-        { otp, token },
-        { withCredentials: true } // ✅ cookie gets set by server
-      );
-
-      alert("Account verified successfully!");
-      navigate("/dashboard");
+ const res = await axios.post(`${BASE_URL}/api/verify-otp`, { otp, token });
+localStorage.setItem("token", res.data.token);
+alert("Account verified successfully!");
+navigate("/dashboard");
 
     } catch (err: any) {
       alert(err.response?.data?.msg || "Invalid OTP");

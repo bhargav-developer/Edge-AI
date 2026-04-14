@@ -36,9 +36,15 @@ export function Profile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+    const authHeader = {
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+};
+
+// in fetchUser:
+const res = await axios.get(`${BASE_URL}/auth/me`, authHeader);
+
+// in handleSaveChanges:
+await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, authHeader);
         console.log(res)
         setUserInfo((prev) => ({
           ...prev,

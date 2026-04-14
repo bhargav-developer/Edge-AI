@@ -7,14 +7,15 @@ import axios from "axios";
 export function Header() {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const handleLogout = async () => {
   try {
-    await axios.post(`${import.meta.env.VITE_BASE_URL}/api/logout`, {}, {
-      withCredentials: true,
-    });
-    navigate("/");
+    await axios.post(`${BASE_URL}/api/logout`, {});
+    localStorage.removeItem("token");
+    navigate("/login");
   } catch (err) {
-    console.error("Logout failed");
+    localStorage.removeItem("token");
+    navigate("/login");
   }
 };
   return (
