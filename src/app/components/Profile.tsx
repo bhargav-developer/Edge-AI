@@ -33,36 +33,28 @@ export function Profile() {
     tradesCompleted: 234,
   });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-    const authHeader = {
-  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-};
+ 
+// your file :contentReference[oaicite:0]{index=0}
 
-// in fetchUser:
-const res = await axios.get(`${BASE_URL}/auth/me`, authHeader);
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/auth/me`, {
+        withCredentials: true,
+      });
 
-// in handleSaveChanges:
-await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, authHeader);
-        console.log(res)
-        setUserInfo((prev) => ({
-          ...prev,
-          name: res.data.user.name,
-          email: res.data.user.email,
-        }));
-      } catch (err) {
-        console.error("Not authenticated");
-      }
-    };
-    fetchUser();
-  }, []);
+      setUserInfo((prev) => ({
+        ...prev,
+        name: res.data.user.name,
+        email: res.data.user.email,
+      }));
+    } catch (err) {
+      console.error("Not authenticated");
+    }
+  };
 
-  useEffect(() => {
-  console.log(userInfo);
-}, [userInfo.name]);
-
-
+  fetchUser();
+}, []);
 
   const tradingHistory = [
     {
@@ -114,18 +106,18 @@ await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, aut
   ];
 
   const handleSaveChanges = async () => {
-     try {
-    await axios.patch(
-      `${BASE_URL}/api/update-profile`,
-      { name: userInfo.name },
-      { withCredentials: true }
-    );
-    toast.success("Profile Updated", {
-      description: "Your changes have been saved successfully",
-    });
-  } catch (err) {
-    toast.error("Failed to update profile");
-  }
+    try {
+      await axios.patch(
+        `${BASE_URL}/api/update-profile`,
+        { name: userInfo.name },
+        { withCredentials: true }
+      );
+      toast.success("Profile Updated", {
+        description: "Your changes have been saved successfully",
+      });
+    } catch (err) {
+      toast.error("Failed to update profile");
+    }
   };
 
   const handleChangePassword = () => {
@@ -297,11 +289,10 @@ await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, aut
                           <td className="px-6 py-4 font-medium">{trade.stock}</td>
                           <td className="px-6 py-4">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                trade.action === "Buy"
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${trade.action === "Buy"
                                   ? "bg-emerald-500/20 text-emerald-400"
                                   : "bg-orange-500/20 text-orange-400"
-                              }`}
+                                }`}
                             >
                               {trade.action}
                             </span>
@@ -312,9 +303,8 @@ await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, aut
                             ${trade.total.toLocaleString()}
                           </td>
                           <td
-                            className={`px-6 py-4 font-semibold ${
-                              trade.profit >= 0 ? "text-emerald-400" : "text-red-400"
-                            }`}
+                            className={`px-6 py-4 font-semibold ${trade.profit >= 0 ? "text-emerald-400" : "text-red-400"
+                              }`}
                           >
                             {trade.profit >= 0 ? "+" : ""}$
                             {Math.abs(trade.profit).toFixed(2)}
@@ -347,12 +337,12 @@ await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, aut
                       <Label htmlFor="name" className="text-gray-400 m-1">
                         Name
                       </Label>
-                     <Input
-  id="name"
-  value={userInfo.name}
-  onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
-  className="bg-gray-800/50 border-gray-700 text-white"
-/>
+                      <Input
+                        id="name"
+                        value={userInfo.name}
+                        onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
+                        className="bg-gray-800/50 border-gray-700 text-white"
+                      />
                     </div>
                     <div>
                       <Label htmlFor="email" className="m-1 text-gray-400">
@@ -366,7 +356,7 @@ await axios.patch(`${BASE_URL}/api/update-profile`, { name: userInfo.name }, aut
                         className="bg-gray-800/50 border-gray-700 text-white"
                       />
                     </div>
-                    <Button 
+                    <Button
                       onClick={handleSaveChanges}
                       className="w-full bg-emerald-400 hover:bg-emerald-500 ">
                       Save Changes
