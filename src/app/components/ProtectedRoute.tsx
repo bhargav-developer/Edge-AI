@@ -5,9 +5,10 @@ import axios from "axios";
 export function ProtectedRoute() {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
-    axios.get("http://localhost:3000/auth/me", { withCredentials: true })
+    axios.get(`${BASE_URL}/auth/me`, { withCredentials: true })
       .then(() => setChecking(false))
       .catch(() => navigate("/", { replace: true }));
   }, []);
