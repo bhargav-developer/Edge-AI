@@ -9,7 +9,7 @@ import { Label } from "./ui/label";
 export function VerifyOtp() {
   const navigate = useNavigate();
   const location = useLocation();
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const token = location.state?.token;
 
@@ -31,10 +31,9 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
     try {
       setLoading(true);
 
- const res = await axios.post(`${BASE_URL}/api/verify-otp`, { otp, token });
-localStorage.setItem("token", res.data.token);
-alert("Account verified successfully!");
-navigate("/dashboard");
+      const res = await axios.post(`${BASE_URL}/api/verify-otp`, { otp, token }, { withCredentials: true });
+      alert("Account verified successfully!");
+      navigate("/dashboard");
 
     } catch (err: any) {
       alert(err.response?.data?.msg || "Invalid OTP");
