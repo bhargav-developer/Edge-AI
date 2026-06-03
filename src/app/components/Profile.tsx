@@ -161,9 +161,6 @@ useEffect(() => {
                   </div>
                 </div>
               </div>
-              <Button variant="outline" className="border-gray-700 bg-gray-800/50 text-white hover:bg-gray-800">
-                Edit Profile
-              </Button>
             </div>
 
             {/* Stats */}
