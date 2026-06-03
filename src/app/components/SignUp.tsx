@@ -6,6 +6,7 @@ import { Label } from "./ui/label";
 import { motion } from "motion/react";
 import { Mail, Lock, User, Chrome, Apple } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export function SignUp() {
   const navigate = useNavigate();
@@ -34,9 +35,13 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword ) {
       alert("Passwords do not match");
-      return;
+      return
+    }
+    if(formData.password.length < 8){
+      toast.error("Password should be atlest 8 digits long")
+      return
     }
 
     try {
@@ -55,7 +60,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
       );
 
 
-      alert("OTP sent! Check your email");
+      toast.success("OTP sent! Check your email");
 
       navigate("/verify-otp", {
         state: { token: res.data.tempToken }, // tempToken still passed via state (not a cookie)
