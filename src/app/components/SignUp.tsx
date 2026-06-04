@@ -39,6 +39,12 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
       alert("Passwords do not match");
       return
     }
+    const nameRegex = /^[A-Za-z\s]+$/;
+
+if (!nameRegex.test(formData.name.trim())) {
+  toast.error("Full name should contain only letters and spaces");
+  return;
+}
     if(formData.password.length < 8){
       toast.error("Password should be atlest 8 digits long")
       return
@@ -105,7 +111,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
           <form onSubmit={handleSignUp} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-300">
+              <Label htmlFor="name"  className="text-gray-300">
                 Full Name
               </Label>
               <div className="relative">
